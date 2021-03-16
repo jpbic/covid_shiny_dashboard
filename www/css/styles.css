@@ -1,0 +1,219 @@
+body {
+  overflow: hidden;
+}
+
+#sidebarCollapsed {
+  z-index: 900;
+  position: fixed;
+}
+
+video:focus {
+  outline: none;
+  border: none;
+}
+
+.content {
+  margin: 0;
+  padding: 0;
+}
+
+.content-wrapper {
+  margin-left: 0;
+  margin-bottom: 5px;
+}
+
+.video-controls {
+  visibility: visible;
+  opacity: 1;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 30px;
+  padding: 4px 12px;
+  transition: opacity 0.3s linear;
+}
+
+.hid {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.3s, opacity 0.3s linear;
+}
+
+#time_lapse_play_button {
+  background-color: #fff;
+  border: none;
+  margin-right: 10px;
+  height: 42px;
+  width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fa-play {
+  color: rgb(27, 38, 49);
+}
+
+.fa-pause {
+  color: rgb(27, 38, 49);
+}
+
+.slider-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  margin-top: 5px;
+}
+
+.time-wrapper {
+  position: relative;
+  font-size: 10px;
+}
+
+#duration-wrapper {
+  width: 100%;
+  bottom: 7px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#time_elapsed {
+  background-color: #fff;
+  color: rgb(27, 38, 49);
+  padding: 2px 3px 1px;
+  border-radius: 3px;
+  width: min-content;
+}
+
+#duration {
+  color: #fff;
+  background-color: rgb(27, 38, 49);
+  padding: 2px 3px 1px;
+  border-radius: 3px;
+}
+
+.video-progress {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 20px;
+}
+
+progress[value] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 150px;
+  height: 5px;
+  border: none;
+  color: rgb(27, 38, 49);
+}
+
+progress[value]::-webkit-progress-bar {
+  background-color: white;
+  border-radius: 2px;
+}
+
+progress[value]::-moz-progress-bar {
+  background-color: rgb(27, 38, 49);
+  border-radius: 2px;
+}
+
+progress[value]::-webkit-progress-value {
+  background-color: rgb(27, 38, 49);
+  border-radius: 2px;
+}
+
+.seek {
+  position: relative;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 5px;
+  background: transparent;
+  cursor: pointer;
+  width: 150px;
+  bottom: 5px;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 10px;
+  width: 10px;
+  border-radius: 5px;
+  background: rgb(27, 38, 49);
+  cursor: pointer;
+  margin-top: 0;
+}
+
+.radio-button-wrapper {
+  top: 10px;
+  right: 2px;
+  width: 20%;
+  background-color: rgb(255, 255, 255, 0.75);
+  padding: 5px;
+  border-radius: 10px;
+  transition: width 0.25s linear;
+  overflow: hidden;
+}
+
+.radio-button-wrapper.inactive {
+  width: 30px;
+  transition: width 0.25s linear;
+}
+
+#time-lapse-choice-list {
+  overflow: hidden;
+  margin-left: 5px;
+}
+
+#tl_title {
+  max-height: 20px;
+  overflow: hidden;
+  margin-left: 20px;
+}
+
+.radio-container {
+  display: block;
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  max-height: 20px;
+  overflow: hidden;
+}
+
+.radio-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 12px;
+  width: 12px;
+  background-color: #ddd;
+  border-radius: 50%;
+}
+
+.radio-container:hover input ~ .checkmark {
+  background-color: #bbb;
+}
+
+.radio-container input:checked ~ .checkmark {
+  background-color: rgb(27, 38, 49);
+}
