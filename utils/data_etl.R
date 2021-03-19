@@ -1,3 +1,5 @@
+# Data sourced from Kaggle: 
+# https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
 required_packages = c(
   'dplyr',
   'tmaptools',
@@ -16,6 +18,19 @@ recovered = clean_df(recovered) %>% add_iso_to_df
 
 write.csv(rbind(confirmed, deaths, recovered), file='./data/all_data_with_iso.csv', row.names=F)
 
+confirmed_us = read.csv('./data/time_series_covid_19_confirmed_US.csv', stringsAsFactors = T) %>%
+  select(Province_State, starts_with('X')) %>%
+  group_by(Province_State) %>%
+  summarise(across(starts_with('X'), sum)) %>%
+  mutate(type = 'confirmed')
+deaths_us = read.csv('./data/time_series_covid_19_deaths_US.csv', stringsAsFactors = T) %>%
+  select(Province_State, starts_with('X')) %>%
+  group_by(Province_State) %>%
+  summarise(across(starts_with('X'), sum)) %>%
+  mutate(type = 'deaths')
+
+write.csv(rbind(confirmed_us, deaths_us), file='./data/us_data.csv', row.names=F)
+
 clean_df = function(df) {
   type = deparse(substitute(df))
   return(
@@ -27,6 +42,9 @@ clean_df = function(df) {
         Province.State != 'French Polynesia'
       ) %>%
       select(-Province.State, -Country.Region) %>%
+      group_by(Long, Lat) %>%
+      summarise(across(starts_with('X'), sum)) %>%
+      ungroup() %>%
       mutate(type = type)
   )
 }
