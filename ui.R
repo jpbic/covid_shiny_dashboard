@@ -16,7 +16,7 @@ sidebar = dashboardSidebar(
     menuItem(
       'Time Lapse',
       tabName = 'time_lapse',
-      icon = icon('globe-americas')
+      icon = icon('stopwatch')
     )
   )
 )
@@ -28,6 +28,7 @@ body = dashboardBody(
   tags$head(tags$link(rel='stylesheet', type='text/css', href='css/styles.css')),
   extendShinyjs(script='js/script.js', functions=c('play_video', 'video_state')),
   tabItems(
+    
     # Time Lapse ####
     tabItem(
       tabName = 'time_lapse',
@@ -38,12 +39,13 @@ body = dashboardBody(
             'time_lapse_vid',
             id='time_lapse_vid',
             type='video/mp4',
-            src='conf_anim.mp4',
+            src='global_anim.mp4',
             autoplay=NA,
             muted=NA,
             width='100%',
             height='auto'
           ),
+          
           # > Video Controls ####
           absolutePanel(
             id='video-controls-wrapper',
@@ -54,6 +56,7 @@ body = dashboardBody(
                 icon=icon('pause', class='fa-xs')
               )
             ),
+            
             # >> Slider ####
             div(
               class='slider-wrapper',
@@ -86,6 +89,7 @@ body = dashboardBody(
             )
           )
         ),
+        
         # > Time Lapse Choices ####
         absolutePanel(
           id='time_lapse_radio-button-wrapper',
@@ -96,11 +100,11 @@ body = dashboardBody(
             tags$h4('Choose Time Lapse', id='tl_title'),
             tags$label(
               class='radio-container',
-              '% Change in New Confirmed Cases',
+              'Global Outbreak Time Lapse',
               tags$input(
                 type='radio',
                 name='time-lapse',
-                value='conf_anim.mp4',
+                value='global_anim.mp4',
                 checked='checked'
               ),
               tags$span(
@@ -109,11 +113,11 @@ body = dashboardBody(
             ),
             tags$label(
               class='radio-container',
-              'Cumulative % of Population Infected',
+              'US Outbreak Time Lapse',
               tags$input(
                 type='radio',
                 name='time-lapse',
-                value='population_anim.mp4'
+                value='us_anim.mp4'
               ),
               tags$span(
                 class='checkmark'

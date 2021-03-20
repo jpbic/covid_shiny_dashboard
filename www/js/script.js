@@ -21,9 +21,7 @@ shinyjs.init = function() {
   videoControls = document.getElementById('video-controls-wrapper');
   tl_button_wrapper = document.getElementById('time_lapse_radio-button-wrapper');
   tl_choice_list = document.getElementById('time-lapse-choice-list');
-  console.log(window.getComputedStyle(tl_choice_list).getPropertyValue('height').replace('px', ''));
   tl_choice_list.style.maxHeight = window.getComputedStyle(tl_choice_list).getPropertyValue('height');
-  console.log(tl_choice_list.style.maxHeight);
   vidControlsTimeoutId = window.setTimeout(function() {videoControls.classList.toggle('hid');}, hide_control_threshold);
   radioListTimeoutId = window.setTimeout(toggle_radio_buttons, hide_control_threshold);
   
