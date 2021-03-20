@@ -1,12 +1,10 @@
 required_packages = c(
   'USAboundaries',
   'USAboundariesData',
-  'usmap',
-  'tidyr'
+  'tmap'
 )
 lapply(required_packages, require, character.only=T)
 
-data(statepop)
 data(World)
 
 us_config = list(
@@ -17,9 +15,6 @@ us_config = list(
   geom_join_df=select(us_states(), name, geometry),
   geom_left_join_by='Province_State',
   geom_right_join_by='name',
-  pop_df=select(statepop, full, pop_2015),
-  pop_left_join_by='Province_State',
-  pop_right_join_by='full',
   pop_col='pop_2015',
   critical_value=9.25,
   legend_title='Normalized Population %', 
@@ -40,10 +35,7 @@ global_config = list(
   geom_join_df=select(World, iso_a3, geometry),
   geom_left_join_by='iso3',
   geom_right_join_by='iso_a3',
-  pop_df=select(filter(world_bank_pop, indicator=='SP.POP.TOTL'), country, `2017`),
-  pop_left_join_by='iso3',
-  pop_right_join_by='country',
-  pop_col='2017',
+  pop_col='X2017',
   critical_value=2.5,
   legend_title='Normalized Population %', 
   polygon_col='pop_perc', 

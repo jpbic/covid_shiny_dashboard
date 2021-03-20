@@ -17,6 +17,20 @@ sidebar = dashboardSidebar(
       'Time Lapse',
       tabName = 'time_lapse',
       icon = icon('stopwatch')
+    ),
+    menuItem(
+      'Graphing',
+      icon = icon('chart-area'),
+      menuSubItem(
+        'Outbreak Analysis',
+        tabName = 'outbreak_charts',
+        icon = NULL
+      ),
+      menuSubItem(
+        'Side-by-Side',
+        tabName = 'side_by_side',
+        icon = NULL
+      )
     )
   )
 )
@@ -125,6 +139,19 @@ body = dashboardBody(
             )
           )
         )
+      )
+    ),
+    
+    # Graphing ####
+    tabItem(
+      box(
+        plotOutput(
+          'outbreak_plot',
+          width='100%',
+          height='100%'
+        ),
+        width=8,
+        height='75%'
       )
     )
   )

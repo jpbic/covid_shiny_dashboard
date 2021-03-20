@@ -4,61 +4,81 @@ required_packages = c(
   'dplyr',
   'tmaptools',
   'countrycode',
+  'tidyr',
+  'lubridate',
+  'usmap',
   'sf'
 )
 lapply(required_packages, require, character.only=T)
 
-confirmed = read.csv('./data/time_series_covid_19_confirmed.csv', stringsAsFactors = T) %>%
-  rename_with(~gsub('(\\.)([0-2]{2})([0-2]{2})$', '\\1\\3', .x))
-confirmed = clean_df(confirmed)
-deaths = read.csv('./data/time_series_covid_19_deaths.csv', stringsAsFactors = T)
-deaths = clean_df(deaths)
-recovered = read.csv('./data/time_series_covid_19_recovered.csv', stringsAsFactors = T)
-recovered = clean_df(recovered)
+total_global = build_global_frame()
+write.csv(total_global, file='./data/all_data_with_iso.csv', row.names=F)
 
-total = full_join(confirmed, deaths) %>% full_join(recovered) %>%
-  add_iso_to_df %>%
-  mutate(across(c(confirmed, deaths, recovered), ~replace_na(.x, 0))) %>%
-  group_by(iso3, date) %>%
-  summarise(across(c(confirmed, deaths, recovered), sum)) %>%
-  ungroup()
-
-write.csv(total, file='./data/all_data_with_iso.csv', row.names=F)
-
-confirmed_us = read.csv('./data/time_series_covid_19_confirmed_US.csv', stringsAsFactors = T) %>%
-  select(Province_State, starts_with('X')) %>%
-  pivot_longer(starts_with('X'), names_to='date', values_to='confirmed') %>%
-  mutate(date = as.Date(gsub('X', '', date), '%m.%d.%y')) %>%
-  group_by(Province_State, date) %>%
-  summarise(confirmed=sum(confirmed)) %>%
-  ungroup()
-deaths_us = read.csv('./data/time_series_covid_19_deaths_US.csv', stringsAsFactors = T) %>%
-  select(Province_State, starts_with('X')) %>%
-  pivot_longer(starts_with('X'), names_to='date', values_to='deaths') %>%
-  mutate(date = as.Date(gsub('X', '', date), '%m.%d.%y')) %>%
-  group_by(Province_State, date) %>%
-  summarise(deaths=sum(deaths)) %>%
-  ungroup()
-
-write.csv(full_join(confirmed_us, deaths_us), file='./data/us_data.csv', row.names=F)
-
-clean_df = function(df) {
-  type = deparse(substitute(df))
-  return(
-    df %>%
+write.csv(build_us_frame(), file='./data/us_data.csv', row.names=F)
+  
+build_global_frame = function() {
+  total = data.frame()
+  global_pop = select(filter(world_bank_pop, indicator=='SP.POP.TOTL'), country, `2017`)
+  for (t in c('confirmed', 'deaths', 'recovered')) {
+    df = read.csv(paste0('./data/time_series_covid_19_', t, '.csv'), stringsAsFactors = F) %>%
+      rename_with(~gsub('(\\.)([0-2]{2})([0-2]{2})$', '\\1\\3', .x)) %>%
       filter(
         Lat != 0 | Long != 0, 
         !is.na(Lat) & !is.na(Long), 
         Country.Region != 'Micronesia',
         Province.State != 'French Polynesia'
       ) %>%
-      group_by(Country.Region, Lat, Long) %>%
-      summarise(across(starts_with('X'), sum)) %>%
-      ungroup() %>%
       add_row(Country.Region='North Korea', Lat=39.0392, Long=125.7625) %>%
-      mutate(across(starts_with('X'), ~replace_na(.x, 0))) %>%
-      pivot_longer(starts_with('X'), names_to='date', values_to=type) %>%
-      mutate(date = as.Date(gsub('X', '', date), '%m.%d.%y'))
+      pivot_df(type=t, Country.Region, Lat, Long)
+    
+    if (dim(total)[1] == 0) {
+      total = df
+    } else {
+      total = full_join(total, df)
+    }
+  }
+  
+  total = total %>%
+    add_iso_to_df %>%
+    mutate(across(c(confirmed, deaths, recovered), ~replace_na(.x, 0))) %>%
+    group_by(iso3, date) %>%
+    summarise(across(c(confirmed, deaths, recovered), sum)) %>%
+    ungroup() %>%
+    inner_join(global_pop, by=c('iso3'='country')) %>%
+    filter(!is.na(iso3), !is.na('2017'))
+  
+  return(total)
+}
+
+build_us_frame = function() {
+  data(statepop)
+  us_pop = select(statepop, full, pop_2015)
+  total = data.frame()
+  for(t in c('confirmed', 'deaths')) {
+    df = read.csv(paste0('./data/time_series_covid_19_', t, '_US.csv'), stringsAsFactors=F) %>%
+      pivot_df(type=t, Province_State)
+    
+    if (dim(total)[1] == 0) {
+      total = df
+    } else {
+      total = full_join(total, df)
+    }
+  }
+  
+  total = total %>%
+    left_join(us_pop, by=c('Province_State'='full'))
+  
+  return(total)
+}
+
+pivot_df = function(df, type, ...) {
+  return(df %>%
+    group_by(...) %>%
+    summarise(across(starts_with('X'), sum)) %>%
+    ungroup() %>%
+    mutate(across(starts_with('X'), ~replace_na(.x, 0))) %>%
+    pivot_longer(starts_with('X'), names_to='date', values_to=type) %>%
+    mutate(date = as.Date(gsub('X', '', date), '%m.%d.%y'))
   )
 }
 
