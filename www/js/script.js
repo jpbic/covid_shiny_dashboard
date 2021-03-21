@@ -56,10 +56,19 @@ shinyjs.init = function() {
       Shiny.setInputValue('time_lapse_status', 'playing');
     });
   });
+  document.querySelectorAll('input[name="outbreak_graph"]').forEach((el) => {
+    el.addEventListener('change', function(event) {
+      Shiny.setInputValue('outbreak_graph_level', event.target.value);
+    });
+  });
 };
 
 shinyjs.play_video = function() {
   play_video();
+};
+
+shinyjs.set_outbreak_level = function() {
+  Shiny.setInputValue('outbreak_graph_level', 'global');
 };
 
 play_video = function() {

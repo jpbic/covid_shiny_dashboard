@@ -13,6 +13,7 @@ header = dashboardHeader(title = 'COVID-19 Analysis')
 sidebar = dashboardSidebar(
   collapsed=T,
   sidebarMenu(
+    id='tabs',
     menuItem(
       'Time Lapse',
       tabName = 'time_lapse',
@@ -40,7 +41,10 @@ body = dashboardBody(
   theme_custom,
   useShinyjs(),
   tags$head(tags$link(rel='stylesheet', type='text/css', href='css/styles.css')),
-  extendShinyjs(script='js/script.js', functions=c('play_video', 'video_state')),
+  extendShinyjs(
+    script='js/script.js', 
+    functions=c('play_video', 'set_outbreak_level')
+  ),
   tabItems(
     
     #  > Time Lapse ####
@@ -154,18 +158,21 @@ body = dashboardBody(
         id='outbreak-controls-box',
         width=4,
         height='100%',
-        tags$h2('Graph Controls', id='graph_control_title'),
+        div(
+          id='ob_control_wrapper',
+          tags$h2('Graph Controls', id='outbreak_control_title')
+        ),
         div(
           id='outbreak_graph_level',
           class='radio-button-choice-list',
-          tags$h4('Graph Level', id='tl_title'),
+          tags$h4('Graph Level'),
           tags$label(
             class='radio-container',
             'Global',
             tags$input(
               type='radio',
               name='outbreak_graph',
-              value='global_anim.mp4',
+              value='global',
               checked='checked'
             ),
             tags$span(
@@ -178,12 +185,17 @@ body = dashboardBody(
             tags$input(
               type='radio',
               name='outbreak_graph',
-              value='us_anim.mp4'
+              value='us'
             ),
             tags$span(
               class='checkmark'
             )
           )
+        ),
+        selectInput(
+          'state_province_select',
+          label='Country',
+          choices=sort(unique(global_graph_data$list_country))
         )
       )
     )

@@ -9,7 +9,7 @@ data(World)
 
 us_config = list(
   input_file='./data/us_data.csv', 
-  output_file='./www/us_anim2.mp4', 
+  output_file='./www/us_anim.mp4', 
   type='confirmed', 
   geom_join_df=select(us_states(), name, geometry),
   geom_left_join_by='Province_State',
@@ -25,7 +25,7 @@ us_config = list(
 
 global_config = list(
   input_file='./data/all_data_with_iso.csv', 
-  output_file='./www/global_anim2.mp4', 
+  output_file='./www/global_anim.mp4', 
   type='confirmed', 
   geom_join_df=select(World, iso_a3, geometry),
   geom_left_join_by='iso3',

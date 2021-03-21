@@ -99,4 +99,4 @@ get_maps_mp4 = function(
   return(t)
 }
 
-do.call(generate_mp4, us_config)
+#do.call(generate_mp4, global_config)

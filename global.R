@@ -1,5 +1,5 @@
-source('./utils/generate_gif_and_mp4.R')
-source('./utils/config/mp4_config.R')
+global_graph_data = read.csv('./data/all_data_with_iso.csv') %>%
+  mutate(date = as.Date(date), list_country = countrycode(iso3, 'iso3c', 'country.name.en'))
 
-global_graph_data = do.call(create_map_data, global_graph_config)
-us_graph_date = do.call(create_map_data, us_graph_config)
+us_graph_data = read.csv('./data/us_data.csv') %>%
+  mutate(date = as.Date(date))

@@ -11,7 +11,7 @@ required_packages = c(
 )
 lapply(required_packages, require, character.only=T)
 
-global_critical_value = 2.5
+global_critical_value = 2.25
 us_critical_value = 9.25
 
 total_global = build_global_frame()
@@ -44,15 +44,16 @@ build_global_frame = function() {
   total = total %>%
     add_iso_to_df %>%
     mutate(across(c(confirmed, deaths, recovered), ~replace_na(.x, 0))) %>%
-    group_by(iso3, date) %>%
+    group_by(Country.Region, iso3, date) %>%
     summarise(across(c(confirmed, deaths, recovered), sum)) %>%
     ungroup() %>%
     inner_join(global_pop, by=c('iso3'='country')) %>%
     filter(!is.na(iso3), !is.na(population)) %>%
+    group_by(Country.Region, iso3) %>%
     mutate(
-      change_confirmed = confirmed - lag(confirmed, n = 1, default=0, order_by=iso3, date),
-      change_deaths = deaths - lag(deaths, n=1, default=0, order_by=iso3, date),
-      change_recovered = recovered - lag(recovered, n=1, default=0, order_by=iso3, date)
+      change_confirmed = confirmed - lag(confirmed, n = 1, default=0, order_by=date),
+      change_deaths = deaths - lag(deaths, n=1, default=0, order_by=date),
+      change_recovered = recovered - lag(recovered, n=1, default=0, order_by=date)
     ) %>%
     mutate(
       rolling_ave_confirmed = slide_dbl(change_confirmed, mean, .before=7, .after=0),
@@ -61,23 +62,24 @@ build_global_frame = function() {
     ) %>%
     mutate(
       perc_change = 100 *
-             slide_dbl(rolling_ave_confirmed - lag(rolling_ave_confirmed, n=1, default=0, order_by=iso3, date), sum, .before=3, .after=0) /
+             slide_dbl(rolling_ave_confirmed - lag(rolling_ave_confirmed, n=1, default=0, order_by=date), sum, .before=3, .after=0) /
              (population * .0005)
     ) %>%
     mutate(pop_perc = 100 * rolling_ave_confirmed / (population * .002)) %>%
     mutate(status = ifelse(
       pmin(pop_perc, perc_change) >= global_critical_value &
-        pmin(lag(pop_perc, n=1, default=0, order_by=iso3, date),
-             lag(perc_change, n=1, default=0, order_by=iso3, date)) < global_critical_value,
+        pmin(lag(pop_perc, n=1, default=0, order_by=date),
+             lag(perc_change, n=1, default=0, order_by=date)) < global_critical_value,
       'outbreak',
       ifelse(
         pmax(pop_perc, perc_change) < global_critical_value &
-          pmax(lag(perc_change, n=1, default=0, order_by=iso3, date),
-               lag(pop_perc, n=1, default=0, order_by=iso3, date)) >= global_critical_value,
+          pmax(lag(perc_change, n=1, default=0, order_by=date),
+               lag(pop_perc, n=1, default=0, order_by=date)) >= global_critical_value,
         'stable',
         NA
       )
-    ))
+    )) %>%
+    ungroup()
   
   total$status[1] = 'stable'
   for (i in 2:nrow(total)) {
@@ -115,9 +117,10 @@ build_us_frame = function() {
   
   total = total %>%
     left_join(us_pop, by=c('Province_State'='full')) %>%
+    group_by(Province_State) %>%
     mutate(
-      change_confirmed = confirmed - lag(confirmed, n = 1, default=0, order_by=Province_State, date),
-      change_deaths = deaths - lag(deaths, n=1, default=0, order_by=Province_State, date)
+      change_confirmed = confirmed - lag(confirmed, n = 1, default=0, order_by=date),
+      change_deaths = deaths - lag(deaths, n=1, default=0, order_by=date)
     ) %>%
     mutate(
       rolling_ave_confirmed = slide_dbl(change_confirmed, mean, .before=7, .after=0),
@@ -125,23 +128,24 @@ build_us_frame = function() {
     ) %>%
     mutate(
       perc_change = 100 *
-        slide_dbl(rolling_ave_confirmed - lag(rolling_ave_confirmed, n=1, default=0, order_by=Province_State, date), sum, .before=3, .after=0) /
+        slide_dbl(rolling_ave_confirmed - lag(rolling_ave_confirmed, n=1, default=0, order_by=date), sum, .before=3, .after=0) /
         (population * .0005)
     ) %>%
     mutate(pop_perc = 100 * rolling_ave_confirmed / (population * .002)) %>%
     mutate(status = ifelse(
       pmin(pop_perc, perc_change) >= us_critical_value &
-        pmin(lag(pop_perc, n=1, default=0, order_by=Province_State, date),
-             lag(perc_change, n=1, default=0, order_by=Province_State, date)) < us_critical_value,
+        pmin(lag(pop_perc, n=1, default=0, order_by=date),
+             lag(perc_change, n=1, default=0, order_by=date)) < us_critical_value,
       'outbreak',
       ifelse(
         pmax(pop_perc, perc_change) < us_critical_value &
-          pmax(lag(perc_change, n=1, default=0, order_by=Province_State, date),
-               lag(pop_perc, n=1, default=0, order_by=Province_State, date)) >= us_critical_value,
+          pmax(lag(perc_change, n=1, default=0, order_by=date),
+               lag(pop_perc, n=1, default=0, order_by=date)) >= us_critical_value,
         'stable',
         NA
       )
-    ))
+    )) %>%
+    ungroup()
   
   total$status[1] = 'stable'
   for (i in 2:nrow(total)) {

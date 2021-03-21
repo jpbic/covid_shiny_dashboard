@@ -218,9 +218,17 @@ input[type=range]::-webkit-slider-thumb {
   background-color: rgb(27, 38, 49);
 }
 
-#outbreak_graph_level {
+#ob_control_wrapper {
   display: flex;
-  align-items: center;
   justify-content: center;
-  height: 60px;
+  align-items:center;
+}
+
+#outbreak_controls_title {
+  text-align: center;
+  width: 100%;
+}
+
+#outbreak_graph_level {
+  margin-bottom: 20px;
 }
