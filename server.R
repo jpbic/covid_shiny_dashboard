@@ -28,4 +28,8 @@ shinyServer(function(input, output, session) {
                 )
     )
   })
+  
+  outbreak_chart = reactive({
+    
+  })
 })

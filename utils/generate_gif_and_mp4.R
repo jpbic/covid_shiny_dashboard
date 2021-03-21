@@ -21,10 +21,7 @@ generate_mp4 = function(
   geom_join_df,
   geom_left_join_by,
   geom_right_join_by,
-  pop_col,
-  critical_value,
   legend_title=NA, 
-  polygon_col, 
   breaks=NULL, 
   pal=NULL, 
   bbox=NULL,
@@ -32,22 +29,17 @@ generate_mp4 = function(
   height=470,
   fps=8
 ) {
-  sf_df = create_map_data(input_file, type, group_by_cols, geom_join_df, 
-                          geom_left_join_by, geom_right_join_by, pop_col, critical_value)
+  sf_df = create_map_data(input_file, geom_join_df, geom_left_join_by, geom_right_join_by)
   
-  tmap_animation(get_maps_mp4(sf_df, legend_title, polygon_col, breaks, pal, bbox), 
+  tmap_animation(get_maps_mp4(sf_df, type, legend_title, breaks, pal, bbox), 
                  filename=output_file, fps=fps, width=width, height=height)
 }
 
 create_map_data = function(
   input_file, 
-  type,
-  group_by_cols,
   join_df,
   left_join_by,
-  right_join_by,
-  pop_col,
-  critical_value
+  right_join_by
 ) {
   message('Creating SF Object')
   
@@ -55,50 +47,7 @@ create_map_data = function(
   
   sf_df = read.csv(input_file, stringsAsFactors = F) %>%
     mutate(date=as.Date(date)) %>%
-    select(!!!syms(group_by_cols), !!!syms(left_join_by), !!as.symbol(type), !!as.symbol(pop_col)) %>%
-    rename(data_col = !!as.symbol(type)) %>%
-    mutate(change = data_col - lag(data_col, n = 1, default=0, order_by=!!!syms(group_by_cols))) %>%
-    mutate(rolling_ave_change = slide_dbl(change, mean, .before=7, .after=0)) %>%
-    mutate(change_delta = change - lag(change, n=1, default=0, order_by=!!!syms(group_by_cols))) %>%
-    mutate(rolling_ave_change_delta = slide_dbl(change_delta, mean, .before=7, .after=0)) %>%
-    left_join(join_df, by=join_vector) %>%
-    ungroup() %>%
-    mutate(perc_change = 100 *
-             slide_dbl(rolling_ave_change - lag(rolling_ave_change, n=1, default=0, order_by=!!!syms(group_by_cols)), sum, .before=3, .after=0) /
-             (!!as.symbol(pop_col) * .0005)
-    ) %>%
-    mutate(pop_perc = 100 * rolling_ave_change / (!!as.symbol(pop_col) * .002)) %>%
-    mutate(perc_change_growth = 100 *
-             slide_dbl(rolling_ave_change_delta - lag(rolling_ave_change_delta, n=1, default=0, order_by=!!!syms(group_by_cols)), sum, .before=3, .after=0) /
-             (!!as.symbol(pop_col) * .0005)
-    ) %>%
-    mutate(status = ifelse(
-      pmin(pop_perc, perc_change) >= critical_value &
-        pmin(lag(pop_perc, n=1, default=0, order_by=!!!syms(group_by_cols)),
-            lag(perc_change, n=1, default=0, order_by=!!!syms(group_by_cols))) < critical_value,
-      'outbreak',
-      ifelse(
-        pmax(pop_perc, perc_change) < critical_value &
-          pmax(lag(perc_change, n=1, default=0, order_by=!!!syms(group_by_cols)),
-              lag(pop_perc, n=1, default=0, order_by=!!!syms(group_by_cols))) >= critical_value,
-        'stable',
-        NA
-      )
-    ))
-
-  sf_df$status[1] = 'stable'
-  for (i in 2:nrow(sf_df)) {
-    if (sf_df[i, left_join_by] != sf_df[i-1, left_join_by]) {
-      sf_df$status[i] = 'stable'
-    }
-    else if (is.na(sf_df$status[i])) {
-      sf_df$status[i] = sf_df$status[i-1]
-    }
-  }
-  sf_df = mutate(sf_df, status_bin = ifelse(status=='outbreak', 1, -1)) %>%
-    mutate(status = factor(status))
-
-  sf_df = mutate(sf_df, across(c(rolling_ave_change, pop_perc, perc_change), ~replace_na(.x, 0)))
+    left_join(join_df, by=join_vector)
 
   message('SF Object Created')
   return(st_sf(sf_df))
@@ -106,8 +55,8 @@ create_map_data = function(
 
 get_maps_mp4 = function(
   sf_df, 
+  type,
   legend_title, 
-  polygon_col, 
   breaks=NULL, 
   pal=NULL, 
   bbox=NULL
@@ -115,7 +64,7 @@ get_maps_mp4 = function(
   message('Building Maps')
   
   t = tm_shape(sf_df, bbox=bbox) +
-    tm_polygons(polygon_col, 
+    tm_polygons('pop_perc', 
                 colorNA = NULL, 
                 palette=pal, 
                 title=legend_title, 

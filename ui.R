@@ -43,7 +43,7 @@ body = dashboardBody(
   extendShinyjs(script='js/script.js', functions=c('play_video', 'video_state')),
   tabItems(
     
-    # Time Lapse ####
+    #  > Time Lapse ####
     tabItem(
       tabName = 'time_lapse',
       absolutePanel(
@@ -60,7 +60,7 @@ body = dashboardBody(
             height='auto'
           ),
           
-          # > Video Controls ####
+          # >> Video Controls ####
           absolutePanel(
             id='video-controls-wrapper',
             class='video-controls',
@@ -71,7 +71,7 @@ body = dashboardBody(
               )
             ),
             
-            # >> Slider ####
+            # >>> Slider ####
             div(
               class='slider-wrapper',
               div(
@@ -104,7 +104,7 @@ body = dashboardBody(
           )
         ),
         
-        # > Time Lapse Choices ####
+        # >> Time Lapse Choices ####
         absolutePanel(
           id='time_lapse_radio-button-wrapper',
           class='radio-button-wrapper',
@@ -142,16 +142,49 @@ body = dashboardBody(
       )
     ),
     
-    # Graphing ####
+    # > Graphing ####
     tabItem(
+      tabName='outbreak_charts',
       box(
-        plotOutput(
-          'outbreak_plot',
-          width='100%',
-          height='100%'
-        ),
+        plotOutput('outbreak_plot'),
         width=8,
-        height='75%'
+        height='100%'
+      ),
+      box(
+        id='outbreak-controls-box',
+        width=4,
+        height='100%',
+        tags$h2('Graph Controls', id='graph_control_title'),
+        div(
+          id='outbreak_graph_level',
+          class='radio-button-choice-list',
+          tags$h4('Graph Level', id='tl_title'),
+          tags$label(
+            class='radio-container',
+            'Global',
+            tags$input(
+              type='radio',
+              name='outbreak_graph',
+              value='global_anim.mp4',
+              checked='checked'
+            ),
+            tags$span(
+              class='checkmark'
+            )
+          ),
+          tags$label(
+            class='radio-container',
+            'US',
+            tags$input(
+              type='radio',
+              name='outbreak_graph',
+              value='us_anim.mp4'
+            ),
+            tags$span(
+              class='checkmark'
+            )
+          )
+        )
       )
     )
   )
