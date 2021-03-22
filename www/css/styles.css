@@ -2,17 +2,31 @@ body {
   overflow: hidden;
 }
 
+.skin-blue .main-header .navbar {
+  box-shadow: none;
+}
+
+.skin-blue .main-sidebar {
+  box-shadow: none;
+}
+
+.nav>li>a:hover {
+  background-color: rgb(27, 38, 49);
+}
+
 .fa-linkedin {
   color: #fff;
-  width: 35px;
   font-size: 35px;
   padding: 7px;
   text-align: center;
   background-color: rgb(44, 62, 80);
-  margin-right: 25px;
 }
 
 .fa-linkedin:hover {
+  background-color: rgb(27, 38, 49);
+}
+
+.dropdown:hover {
   background-color: rgb(27, 38, 49);
 }
 
@@ -34,6 +48,10 @@ video:focus {
 .content-wrapper {
   margin-left: 0;
   margin-bottom: 5px;
+}
+
+.wrapper {
+  overflow: hidden;
 }
 
 .video-controls {
@@ -244,5 +262,51 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .graph_level {
+  margin-bottom: 20px;
+}
+
+#about-img {
+  height: 15%;
+  width: auto;
+}
+
+#about-panel {
+  width: 100%;
+  height: 100%;
+  background: url('../img/covid_about.jpg');
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#about-container {
+  width: 100%;
+  margin: 0 100px 50px;
+  min-height: 500px;
+  background-color: rgb(27, 38, 49);
+  opacity: 0.85;
+  border-radius: 15px;
+  box-shadow: 2px 0 5px #aaa, -2px 0 5px #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+#about-title {
+  font-size: 40px;
+  font-weight: bold;
+  color: #fff;
+  padding-bottom: 20px;
+  margin-bottom: 15px;
+  width: 85%;
+  border-bottom: 1px solid white;
+  text-align: center;
+}
+
+#about-content {
+  font-size: 20px;
+  width: 85%;
   margin-bottom: 20px;
 }

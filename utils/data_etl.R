@@ -81,7 +81,8 @@ build_global_frame = function() {
     )) %>%
     mutate(mortality_rate = slide_dbl(deaths, mean, .before=7, .after=0) / slide_dbl(confirmed, mean, .before=7, .after=0)) %>%
     mutate(mortality_rate = replace_na(mortality_rate, 0)) %>%
-    ungroup()
+    ungroup() %>%
+    mutate(continent = countrycode(iso3, 'iso3c', 'continent'))
   
   total$status[1] = 'stable'
   for (i in 2:nrow(total)) {

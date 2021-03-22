@@ -22,6 +22,7 @@ shinyServer(function(input, output, session) {
     )
   }, ignoreInit=T)
   
+  # Time Lapse ####
   observeEvent(input$time_lapse_play_button, {
     js$play_video('time_lapse_vid')
   })
@@ -38,6 +39,7 @@ shinyServer(function(input, output, session) {
     )
   })
   
+  # Outbreak Analysis ####
   state_province_choices = reactive({
     if (input$outbreak_graph_level == 'us') {
       sort(unique(us_graph_data$Province_State))
@@ -93,6 +95,7 @@ shinyServer(function(input, output, session) {
     )
   })
   
+  # Metrics ####
   state_province_metric = reactive({
     if (input$metric_graph_level == 'us') {
       sort(unique(us_graph_data$Province_State))

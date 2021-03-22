@@ -21,6 +21,7 @@ generate_mp4 = function(
   geom_join_df,
   geom_left_join_by,
   geom_right_join_by,
+  continent,
   legend_title=NA, 
   breaks=NULL, 
   pal=NULL, 
@@ -29,7 +30,8 @@ generate_mp4 = function(
   height=470,
   fps=8
 ) {
-  sf_df = create_map_data(input_file, geom_join_df, geom_left_join_by, geom_right_join_by)
+  sf_df = create_map_data(input_file, geom_join_df, geom_left_join_by, geom_right_join_by,
+                          continent)
   
   tmap_animation(get_maps_mp4(sf_df, type, legend_title, breaks, pal, bbox), 
                  filename=output_file, fps=fps, width=width, height=height)
@@ -39,7 +41,8 @@ create_map_data = function(
   input_file, 
   join_df,
   left_join_by,
-  right_join_by
+  right_join_by,
+  cont
 ) {
   message('Creating SF Object')
   
@@ -47,6 +50,7 @@ create_map_data = function(
   
   sf_df = read.csv(input_file, stringsAsFactors = F) %>%
     mutate(date=as.Date(date)) %>%
+    {if (cont != 'none') filter(., continent==cont) else select(., everything())} %>%
     left_join(join_df, by=join_vector)
 
   message('SF Object Created')
@@ -99,4 +103,4 @@ get_maps_mp4 = function(
   return(t)
 }
 
-#do.call(generate_mp4, global_config)
+#do.call(generate_mp4, europe_config)

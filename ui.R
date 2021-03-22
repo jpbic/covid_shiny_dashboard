@@ -5,6 +5,7 @@ library(shinyWidgets)
 library(dashboardthemes)
 library(jsonlite)
 source('./www/css/custom_theme.R')
+source('./www/about_content.R')
 
 # Header ####
 header = dashboardHeader(title = 'COVID-19 Analysis', 
@@ -39,6 +40,11 @@ sidebar = dashboardSidebar(
         tabName = 'metrics',
         icon = NULL
       )
+    ),
+    menuItem(
+      'About',
+      tabName = 'about',
+      icon = icon('info-circle')
     )
   )
 )
@@ -143,6 +149,18 @@ body = dashboardBody(
                 type='radio',
                 name='time-lapse',
                 value='us_anim.mp4'
+              ),
+              tags$span(
+                class='checkmark'
+              )
+            ),
+            tags$label(
+              class='radio-container',
+              'Europe Outbreak Time Lapse',
+              tags$input(
+                type='radio',
+                name='time-lapse',
+                value='europe_anim.mp4'
               ),
               tags$span(
                 class='checkmark'
@@ -262,6 +280,21 @@ body = dashboardBody(
           'metric_set',
           label='Metric Set',
           choices=metric_set_choices
+        )
+      )
+    ),
+    
+    # > About ####
+    tabItem(
+      tabName='about',
+      absolutePanel(
+        id='about-panel',
+        width='100%',
+        height='100%',
+        div(
+          id='about-container',
+          tags$h1('Comparable Figures for COVID-19', id='about-title'),
+          HTML(about_content)
         )
       )
     )
