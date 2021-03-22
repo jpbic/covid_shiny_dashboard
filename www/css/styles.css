@@ -2,6 +2,20 @@ body {
   overflow: hidden;
 }
 
+.fa-linkedin {
+  color: #fff;
+  width: 35px;
+  font-size: 35px;
+  padding: 7px;
+  text-align: center;
+  background-color: rgb(44, 62, 80);
+  margin-right: 25px;
+}
+
+.fa-linkedin:hover {
+  background-color: rgb(27, 38, 49);
+}
+
 #sidebarCollapsed {
   z-index: 900;
   position: fixed;
@@ -224,11 +238,11 @@ input[type=range]::-webkit-slider-thumb {
   align-items:center;
 }
 
-#outbreak_controls_title {
+.controls_title {
   text-align: center;
   width: 100%;
 }
 
-#outbreak_graph_level {
+.graph_level {
   margin-bottom: 20px;
 }

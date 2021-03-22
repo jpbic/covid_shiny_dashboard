@@ -7,7 +7,14 @@ library(jsonlite)
 source('./www/css/custom_theme.R')
 
 # Header ####
-header = dashboardHeader(title = 'COVID-19 Analysis')
+header = dashboardHeader(title = 'COVID-19 Analysis', 
+                         tags$li(class='dropdown',
+                                 tags$a(
+                                   class='fab fa-linkedin 3x',
+                                   href='https://www.linkedin.com/in/jason-polek-2b248037/',
+                                   target='_blank'
+                                 )
+                         ))
 
 # Sidebar ####
 sidebar = dashboardSidebar(
@@ -28,8 +35,8 @@ sidebar = dashboardSidebar(
         icon = NULL
       ),
       menuSubItem(
-        'Side-by-Side',
-        tabName = 'side_by_side',
+        'Metrics',
+        tabName = 'metrics',
         icon = NULL
       )
     )
@@ -43,7 +50,7 @@ body = dashboardBody(
   tags$head(tags$link(rel='stylesheet', type='text/css', href='css/styles.css')),
   extendShinyjs(
     script='js/script.js', 
-    functions=c('play_video', 'set_outbreak_level')
+    functions=c('play_video', 'set_outbreak_level', 'set_metric_level')
   ),
   tabItems(
     
@@ -146,7 +153,7 @@ body = dashboardBody(
       )
     ),
     
-    # > Graphing ####
+    # > Outbreak Plots ####
     tabItem(
       tabName='outbreak_charts',
       box(
@@ -160,11 +167,11 @@ body = dashboardBody(
         height='100%',
         div(
           id='ob_control_wrapper',
-          tags$h2('Graph Controls', id='outbreak_control_title')
+          tags$h2('Graph Controls', class='control_title')
         ),
         div(
           id='outbreak_graph_level',
-          class='radio-button-choice-list',
+          class='radio-button-choice-list graph-level',
           tags$h4('Graph Level'),
           tags$label(
             class='radio-container',
@@ -193,9 +200,68 @@ body = dashboardBody(
           )
         ),
         selectInput(
-          'state_province_select',
+          'state_province_select_outbreak',
           label='Country',
           choices=sort(unique(global_graph_data$list_country))
+        )
+      )
+    ),
+    
+    # > Metrics ####
+    tabItem(
+      tabName='metrics',
+      box(
+        width=8,
+        height='100%',
+        plotOutput('metrics')
+      ),
+      box(
+        id='metrics-controls-box',
+        width=4,
+        height='100%',
+        div(
+          id='metric_control_wrapper',
+          tags$h2('Graph Controls', class='control_title')
+        ), 
+        div(
+          id='metric_graph_level',
+          class='radio-button-choice-list graph-level',
+          tags$h4('Graph Level'),
+          tags$label(
+            class='radio-container',
+            'Global',
+            tags$input(
+              type='radio',
+              name='metric_graph',
+              value='global',
+              checked='checked'
+            ),
+            tags$span(
+              class='checkmark'
+            )
+          ),
+          tags$label(
+            class='radio-container',
+            'US',
+            tags$input(
+              type='radio',
+              name='metric_graph',
+              value='us'
+            ),
+            tags$span(
+              class='checkmark'
+            )
+          )
+        ),
+        selectInput(
+          'state_province_select_metric',
+          label='Country',
+          choices=sort(unique(global_graph_data$list_country))
+        ),
+        selectInput(
+          'metric_set',
+          label='Metric Set',
+          choices=metric_set_choices
         )
       )
     )

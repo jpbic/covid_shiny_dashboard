@@ -79,6 +79,8 @@ build_global_frame = function() {
         NA
       )
     )) %>%
+    mutate(mortality_rate = slide_dbl(deaths, mean, .before=7, .after=0) / slide_dbl(confirmed, mean, .before=7, .after=0)) %>%
+    mutate(mortality_rate = replace_na(mortality_rate, 0)) %>%
     ungroup()
   
   total$status[1] = 'stable'
@@ -145,6 +147,8 @@ build_us_frame = function() {
         NA
       )
     )) %>%
+    mutate(mortality_rate = slide_dbl(deaths, mean, .before=7, .after=0) / slide_dbl(confirmed, mean, .before=7, .after=0)) %>%
+    mutate(mortality_rate = replace_na(mortality_rate, 0)) %>%
     ungroup()
   
   total$status[1] = 'stable'
