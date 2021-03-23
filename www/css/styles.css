@@ -26,6 +26,26 @@ body {
   background-color: rgb(27, 38, 49);
 }
 
+.fa-arrows-alt-h {
+  background-color: transparent;
+  color: rgb(14, 20, 27);
+}
+
+.fa-percent {
+  background-color: transparent;
+  color: #d47531;
+}
+
+.fa-chevron-up {
+  background-color: transparent;
+  color: rgb(14, 20, 27);
+}
+
+.fa-virus {
+  background-color: transparent;
+  color: rgb(14, 20, 27);
+}
+
 .dropdown:hover {
   background-color: rgb(27, 38, 49);
 }
@@ -33,6 +53,7 @@ body {
 #sidebarCollapsed {
   z-index: 900;
   position: fixed;
+  background-color: #fff;
 }
 
 video:focus {
@@ -52,6 +73,10 @@ video:focus {
 
 .wrapper {
   overflow: hidden;
+}
+
+.skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+  background-color: rgb(224, 224, 224);
 }
 
 .video-controls {
@@ -309,4 +334,25 @@ input[type=range]::-webkit-slider-thumb {
   font-size: 20px;
   width: 85%;
   margin-bottom: 20px;
+}
+
+.plot-container {
+  margin-top: 20px;
+  width: 100%;
+  height: 80%;
+  margin-left: 3px;
+  margin-bottom: 20px;
+}
+
+.alert-info, .bg-aqua, .callout.callout-info, .label-info, .modal-info .modal-body {
+  background-color: rgb(44, 62, 80) !important;
+}
+
+.alert-info, .bg-purple, .callout.callout-info, .label-info, .modal-info .modal-body {
+  background-color: #FD8D3C !important;
+}
+
+.small-box .icon-large {
+  top: 5px;
+  right: 20px;
 }

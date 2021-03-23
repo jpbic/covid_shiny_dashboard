@@ -56,7 +56,7 @@ body = dashboardBody(
   tags$head(tags$link(rel='stylesheet', type='text/css', href='css/styles.css')),
   extendShinyjs(
     script='js/script.js', 
-    functions=c('play_video', 'set_outbreak_level', 'set_metric_level')
+    functions=c('play_video', 'check_browser')
   ),
   tabItems(
     
@@ -174,113 +174,135 @@ body = dashboardBody(
     # > Outbreak Plots ####
     tabItem(
       tabName='outbreak_charts',
-      box(
-        plotOutput('outbreak_plot'),
-        width=8,
-        height='100%'
-      ),
-      box(
-        id='outbreak-controls-box',
-        width=4,
-        height='100%',
-        div(
-          id='ob_control_wrapper',
-          tags$h2('Graph Controls', class='control_title')
+      fluidRow(
+        class='plot-container',
+        box(
+          plotOutput('outbreak_plot'),
+          width=8,
+          height='100%'
         ),
-        div(
-          id='outbreak_graph_level',
-          class='radio-button-choice-list graph-level',
-          tags$h4('Graph Level'),
-          tags$label(
-            class='radio-container',
-            'Global',
-            tags$input(
-              type='radio',
-              name='outbreak_graph',
-              value='global',
-              checked='checked'
+        box(
+          id='outbreak-controls-box',
+          width=4,
+          height='100%',
+          div(
+            id='ob_control_wrapper',
+            tags$h2('Graph Controls', class='control_title')
+          ),
+          div(
+            id='outbreak_graph_level',
+            class='radio-button-choice-list graph-level',
+            tags$h4('Graph Level'),
+            tags$label(
+              class='radio-container',
+              'Global',
+              tags$input(
+                type='radio',
+                name='outbreak_graph',
+                value='global',
+                checked='checked'
+              ),
+              tags$span(
+                class='checkmark'
+              )
             ),
-            tags$span(
-              class='checkmark'
+            tags$label(
+              class='radio-container',
+              'US',
+              tags$input(
+                type='radio',
+                name='outbreak_graph',
+                value='us'
+              ),
+              tags$span(
+                class='checkmark'
+              )
             )
           ),
-          tags$label(
-            class='radio-container',
-            'US',
-            tags$input(
-              type='radio',
-              name='outbreak_graph',
-              value='us'
-            ),
-            tags$span(
-              class='checkmark'
-            )
+          selectInput(
+            'state_province_select_outbreak',
+            label='Country',
+            choices=sort(unique(global_graph_data$list_country))
           )
-        ),
-        selectInput(
-          'state_province_select_outbreak',
-          label='Country',
-          choices=sort(unique(global_graph_data$list_country))
         )
+      ),
+      div(
+        class='valuebox-container',
+        width='100%',
+        height='20%',
+        valueBoxOutput('outbreak_days_box'),
+        valueBoxOutput('outbreak_percentile_box'),
+        valueBoxOutput('outbreak_max_box')
       )
     ),
     
     # > Metrics ####
     tabItem(
       tabName='metrics',
-      box(
-        width=8,
-        height='100%',
-        plotOutput('metrics')
-      ),
-      box(
-        id='metrics-controls-box',
-        width=4,
-        height='100%',
-        div(
-          id='metric_control_wrapper',
-          tags$h2('Graph Controls', class='control_title')
-        ), 
-        div(
-          id='metric_graph_level',
-          class='radio-button-choice-list graph-level',
-          tags$h4('Graph Level'),
-          tags$label(
-            class='radio-container',
-            'Global',
-            tags$input(
-              type='radio',
-              name='metric_graph',
-              value='global',
-              checked='checked'
+      fluidRow(
+        class='plot-container',
+        box(
+          width=8,
+          height='100%',
+          plotOutput('metrics')
+        ),
+        box(
+          id='metrics-controls-box',
+          width=4,
+          height='100%',
+          div(
+            id='metric_control_wrapper',
+            tags$h2('Graph Controls', class='control_title')
+          ), 
+          div(
+            id='metric_graph_level',
+            class='radio-button-choice-list graph-level',
+            tags$h4('Graph Level'),
+            tags$label(
+              class='radio-container',
+              'Global',
+              tags$input(
+                type='radio',
+                name='metric_graph',
+                value='global',
+                checked='checked'
+              ),
+              tags$span(
+                class='checkmark'
+              )
             ),
-            tags$span(
-              class='checkmark'
+            tags$label(
+              class='radio-container',
+              'US',
+              tags$input(
+                type='radio',
+                name='metric_graph',
+                value='us'
+              ),
+              tags$span(
+                class='checkmark'
+              )
             )
           ),
-          tags$label(
-            class='radio-container',
-            'US',
-            tags$input(
-              type='radio',
-              name='metric_graph',
-              value='us'
-            ),
-            tags$span(
-              class='checkmark'
-            )
+          selectInput(
+            'state_province_select_metric',
+            label='Country',
+            choices=sort(unique(global_graph_data$list_country))
+          ),
+          selectInput(
+            'metric_set',
+            label='Metric Set',
+            choices=metric_set_choices
           )
-        ),
-        selectInput(
-          'state_province_select_metric',
-          label='Country',
-          choices=sort(unique(global_graph_data$list_country))
-        ),
-        selectInput(
-          'metric_set',
-          label='Metric Set',
-          choices=metric_set_choices
         )
+      ),
+      div(
+        class='valuebox-container',
+        width='100%',
+        height='20%',
+        valueBoxOutput('metric_ave_box'),
+        valueBoxOutput('metric_percentile_box'),
+        valueBoxOutput('metric_max_box')
       )
     ),
     

@@ -11,7 +11,7 @@ let radioListTimeoutId;
 let tl_button_wrapper;
 let tl_choice_list;
 
-shinyjs.init = function() {
+shinyjs.init = function() { 
   video = document.getElementById('time_lapse_vid');
   duration = document.getElementById('duration');
   time_elapsed = document.getElementById('time_elapsed');
@@ -66,10 +66,22 @@ shinyjs.init = function() {
       Shiny.setInputValue('metric_graph_level', event.target.value);
     });
   });
+  window.addEventListener('load', () => {
+    console.log('loaded');
+    check_browser();
+  });
 };
 
 shinyjs.play_video = function() {
   play_video();
+};
+
+check_browser = function() {
+  try {
+    new RegExp("(?<=)");
+  } catch (err) {
+    window.alert('View on Chrome for best experience.');  
+  } 
 };
 
 play_video = function() {
