@@ -99,11 +99,22 @@ shinyServer(function(input, output, session) {
         theme(plot.title=element_text(hjust=0.5)) +
         ylim(0, prov_df$population[1]*0.002)
     )
+    ave = df %>% group_by(list_country, status) %>%
+      summarise(n = n()) %>%
+      ungroup() %>%
+      filter(status == 'outbreak') %>%
+      summarise(a = mean(n))
     output$outbreak_days_box = renderValueBox({
       valueBox(
         'Total',
         HTML(paste0('Outbreak Days: ', 
-                    length(prov_df$status[prov_df$status == 'outbreak']))),
+                    length(prov_df$status[prov_df$status == 'outbreak']),
+                    br(),
+                    ifelse(is.null(input$outbreak_graph_level) | input$outbreak_graph_level == 'global', 
+                           'Global',
+                           'US'),
+                    ' Average: ',
+                    format(round(ave$a, 0), nsmall=0, big.mark=","))),
         icon=icon('virus'),
         color='aqua'
       )
@@ -290,12 +301,22 @@ shinyServer(function(input, output, session) {
       )
       prov_df = prov_df %>%
         mutate(mortality_rate = ifelse(is.infinite(mortality_rate), 1, mortality_rate))
+      ave = df %>% filter(date==max(date)) %>% 
+        mutate(mortality_rate = ifelse(is.infinite(mortality_rate), 1, mortality_rate)) %>%
+        summarise(a = sum(confirmed * mortality_rate) / sum(confirmed))
       output$metric_ave_box = renderValueBox({
         valueBox(
           'Average',
           HTML(paste0('Mortality Rate: ', 
-                      format(round(select(filter(prov_df, date==max(date)), mortality_rate)*100, 0), 
-                        nsmall=0, big.mark=","),
+                      format(round(select(filter(prov_df, date==max(date)), mortality_rate)*100, 2), 
+                        nsmall=2, big.mark=","),
+                      '%',
+                      br(),
+                      ifelse(is.null(input$metric_graph_level), 
+                             'Global',
+                             ifelse(input$metric_graph_level == 'global', 'Global', 'US')),
+                      ' Average: ',
+                      format(round(ave$a*100, 2), nsmall=2, big.mark=","),
                       '%')),
           icon=icon('arrows-alt-h'),
           color='aqua'
@@ -318,7 +339,7 @@ shinyServer(function(input, output, session) {
         valueBox(
           'Maximum',
           HTML(paste0('Mortality Rate: ', 
-                      format(round(max(prov_df$mortality_rate*100), 0), nsmall=0, big.mark=","),
+                      format(round(max(prov_df$mortality_rate*100), 2), nsmall=2, big.mark=","),
                       '%')),
           icon=icon('chevron-up'),
           color='aqua'
