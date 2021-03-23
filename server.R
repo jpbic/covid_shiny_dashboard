@@ -259,7 +259,7 @@ shinyServer(function(input, output, session) {
           HTML(paste0('Ave Daily New Cases (Pop Adj): ',
                       format(round(df$conf_percentile*100, 0), nsmall=0, big.mark=","), 
                       br(),
-                      'Ave Daily Deaths: ',
+                      'Ave Daily Deaths (Pop Adj): ',
                       format(round(df$death_percentile*100, 0), nsmall=0, big.mark=","))),
           icon=icon('percent'),
           color='purple'
@@ -288,19 +288,22 @@ shinyServer(function(input, output, session) {
           ylim(0, 35) +
           theme(plot.title=element_text(hjust=0.5))
       )
+      prov_df = prov_df %>%
+        mutate(mortality_rate = ifelse(is.infinite(mortality_rate), 1, mortality_rate))
       output$metric_ave_box = renderValueBox({
         valueBox(
           'Average',
           HTML(paste0('Mortality Rate: ', 
-                      format(round(mean(prov_df$mortality_rate*100), 0), nsmall=0, big.mark=","),
+                      format(round(select(filter(prov_df, date==max(date)), mortality_rate)*100, 0), 
+                        nsmall=0, big.mark=","),
                       '%')),
           icon=icon('arrows-alt-h'),
           color='aqua'
         )
       })
-      df = df %>% group_by(list_country) %>% 
-        summarise(ave_mortality = mean(mortality_rate)) %>%
-        mutate(mortality_percentile = trunc(rank(ave_mortality)) / length(ave_mortality)) %>%
+      df = df %>% mutate(mortality_rate = ifelse(is.infinite(mortality_rate), 1, mortality_rate)) %>%
+        filter(date == max(date)) %>%
+        mutate(mortality_percentile = trunc(rank(mortality_rate)) / length(mortality_rate)) %>%
         filter(list_country == input$state_province_select_metric)
       output$metric_percentile_box = renderValueBox({
         valueBox(

@@ -76,6 +76,17 @@ get_maps_mp4 = function(
 ) {
   message('Building Maps')
   
+  # The geometry for France includes French Guiana, which makes the outbreak indicator appear
+  # in an odd place. The below adjusts for this issue.
+  symbol_df = select(sf_df, iso3, date, status_bin, geometry) 
+  if ('iso3' %in% colnames(sf_df)) {
+    c = st_crs(symbol_df)
+    fr_geo = st_geometry(filter(symbol_df, iso3=='FRA', date=='2020-02-01'))
+    fr_geo[[1]][[1]] = NULL
+    symbol_df = mutate(symbol_df, geometry = ifelse(iso3 == 'FRA', fr_geo, geometry))
+    symbol_df$geometry = st_as_sfc(symbol_df$geometry, crs=c)
+  }
+  
   t = tm_shape(sf_df, bbox=bbox) +
     tm_polygons('pop_perc', 
                 colorNA = NULL, 
@@ -88,7 +99,7 @@ get_maps_mp4 = function(
                 border.alpha = 0.05
     ) +
     tm_facets(along='date', free.coords = F, nrow = 1, ncol = 1) +
-    tm_shape(sf_df, bbox=bbox) +
+    tm_shape(symbol_df, bbox=bbox) +
     tm_symbols(size = 0.25, col="status_bin", shape=21, breaks=c(-1, 0, 1), 
                palette=c('#91cf60', '#d92f29'), border.col='white', title.col='Status',
                labels=c('Stable', 'Outbreak')) +
@@ -112,4 +123,4 @@ get_maps_mp4 = function(
   return(t)
 }
 
-#do.call(generate_mp4, europe_config)
+#do.call(generate_mp4, global_config)
