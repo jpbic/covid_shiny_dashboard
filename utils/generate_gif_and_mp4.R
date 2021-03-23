@@ -1,15 +1,24 @@
-required_packages = c(
-  'dplyr',
-  'tmap',
-  'tmaptools',
-  'lubridate',
-  'gifski',
-  'slider',
-  'sf',
-  'RColorBrewer',
-  'tidyr'
-)
-lapply(required_packages, require, character.only = T)
+# required_packages = c(
+#   'dplyr',
+#   'tmap',
+#   'tmaptools',
+#   'lubridate',
+#   'gifski',
+#   'slider',
+#   'sf',
+#   'RColorBrewer',
+#   'tidyr'
+# )
+# lapply(required_packages, require, character.only = T)
+library(dplyr)
+library(tmap)
+library(tmaptools)
+library(lubridate)
+library(gifski)
+library(slider)
+library(sf)
+library(RColorBrewer)
+library(tidyr)
 
 source('./utils/config/mp4_config.R')
 

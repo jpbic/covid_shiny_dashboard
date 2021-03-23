@@ -1,3 +1,5 @@
+library(dashboardthemes)
+
 theme_custom <- shinyDashboardThemeDIY(
   
   ### general

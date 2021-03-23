@@ -1,9 +1,14 @@
-required_packages = c(
-  'USAboundaries',
-  'USAboundariesData',
-  'tmap'
-)
-lapply(required_packages, require, character.only=T)
+# required_packages = c(
+#   'USAboundaries',
+#   'USAboundariesData',
+#   'tmap',
+#   'dplyr'
+# )
+# lapply(required_packages, require, character.only=T)
+library(USAboundaries)
+library(USAboundariesData)
+library(tmap)
+library(dplyr)
 
 data(World)
 

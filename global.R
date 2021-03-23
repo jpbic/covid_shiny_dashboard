@@ -1,3 +1,11 @@
+# required_packages = c(
+#   'dplyr',
+#   'countrycode'
+# )
+# lapply(required_packages, require, character.only=T)
+library(dplyr)
+library(countrycode)
+
 global_graph_data = read.csv('./data/all_data_with_iso.csv') %>%
   mutate(date = as.Date(date), list_country = countrycode(iso3, 'iso3c', 'country.name.en'))
 

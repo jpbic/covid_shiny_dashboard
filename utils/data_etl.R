@@ -1,15 +1,22 @@
 # Data sourced from Kaggle: 
 # https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset
-required_packages = c(
-  'dplyr',
-  'tmaptools',
-  'countrycode',
-  'tidyr',
-  'lubridate',
-  'usmap',
-  'sf'
-)
-lapply(required_packages, require, character.only=T)
+# required_packages = c(
+#   'dplyr',
+#   'tmaptools',
+#   'countrycode',
+#   'tidyr',
+#   'lubridate',
+#   'usmap',
+#   'sf'
+# )
+# lapply(required_packages, require, character.only=T)
+library(dplyr)
+library(tmaptools)
+library(countrycode)
+library(tidyr)
+library(lubridate)
+library(usmap)
+library(sf)
 
 global_critical_value = 2.25
 us_critical_value = 9.25

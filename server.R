@@ -1,16 +1,26 @@
-required_packages = c(
-  'dplyr',
-  'tmap',
-  'tmaptools',
-  'sf',
-  'ggplot2',
-  'tidyr',
-  'lubridate',
-  'countrycode',
-  'sp',
-  'shinyjs'
-)
-lapply(required_packages, require, character.only = T)
+# required_packages = c(
+#   'dplyr',
+#   'tmap',
+#   'tmaptools',
+#   'sf',
+#   'ggplot2',
+#   'tidyr',
+#   'lubridate',
+#   'countrycode',
+#   'sp',
+#   'shinyjs'
+# )
+# lapply(required_packages, require, character.only = T)
+library(dplyr)
+library(tmap)
+library(tmaptools)
+library(sf)
+library(ggplot2)
+library(tidyr)
+library(lubridate)
+library(countrycode)
+library(sp)
+library(shinyjs)
 
 initial_outbreak_graph_level = 'global'
 
@@ -191,11 +201,11 @@ shinyServer(function(input, output, session) {
         filter(list_country == input$state_province_select_metric)
       output$metric_percentile_box = renderValueBox({
         valueBox(
-          'Percentiles (Pop Adj)',
-          HTML(paste0('Confirmed Cases: ',
+          'Percentiles',
+          HTML(paste0('Confirmed Cases (Pop Adj): ',
                       format(round(df$conf_percentile*100, 0), nsmall=0, big.mark=","), 
                       br(),
-                      'Deaths: ',
+                      'Deaths (Pop Adj): ',
                       format(round(df$death_percentile*100, 0), nsmall=0, big.mark=","))),
           icon=icon('percent'),
           color='purple'
@@ -245,8 +255,8 @@ shinyServer(function(input, output, session) {
         filter(list_country == input$state_province_select_metric)
       output$metric_percentile_box = renderValueBox({
         valueBox(
-          'Percentiles (Pop Adj)',
-          HTML(paste0('Ave Daily New Cases: ',
+          'Percentiles',
+          HTML(paste0('Ave Daily New Cases (Pop Adj): ',
                       format(round(df$conf_percentile*100, 0), nsmall=0, big.mark=","), 
                       br(),
                       'Ave Daily Deaths: ',

@@ -1,9 +1,21 @@
+# required_packages = c(
+#   'shiny',
+#   'shinyjs',
+#   'shinydashboard',
+#   'shinyWidgets',
+#   'dashboardthemes',
+#   'jsonlite',
+#   'dplyr'
+# )
+# lapply(required_packages, require, character.only=T)
 library(shiny)
 library(shinyjs)
 library(shinydashboard)
 library(shinyWidgets)
 library(dashboardthemes)
 library(jsonlite)
+library(dplyr)
+
 source('./www/css/custom_theme.R')
 source('./www/about_content.R')
 
